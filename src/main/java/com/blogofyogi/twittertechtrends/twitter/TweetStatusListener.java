@@ -1,5 +1,6 @@
 package com.blogofyogi.twittertechtrends.twitter;
 
+import com.blogofyogi.twittertechtrends.kafka.KafkaPublisher;
 import lombok.extern.slf4j.Slf4j;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -10,7 +11,11 @@ import twitter4j.StatusListener;
 public class TweetStatusListener implements StatusListener {
     @Override
     public void onStatus(Status status) {
-        log.info("Twitter>> @{} : {}",status.getUser().getName(),status.getText());
+        String tweet = status.getText().toLowerCase();
+        String userId = status.getUser().getScreenName();
+
+        KafkaPublisher.send(userId, tweet);
+
     }
 
     @Override
